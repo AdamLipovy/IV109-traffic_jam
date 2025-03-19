@@ -1,3 +1,4 @@
+;;;přidávám komentář abych otestoval git
 extensions [array]
 globals
 [
