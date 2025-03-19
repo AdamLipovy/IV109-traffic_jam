@@ -1,0 +1,15 @@
+okruh:
+    různé části různá rychlost
+        semafor?
+        retardér?
+        přechod?
+
+auta:
+    maximální povolená rychlost
+    oscilace rychlosti a zrychlení
+    reakční doba
+        podle jednotek
+
+nehoda (optional):
+    snížení viditelnosti
+    
