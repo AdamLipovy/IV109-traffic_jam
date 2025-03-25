@@ -17,6 +17,7 @@ car-data-own
   random_speed
   is_breaking
   reaction_time
+  car_color
 ]
 
 
@@ -24,7 +25,10 @@ to setup
   clear-all
   set tick-advance-amount 0.01
   ;;;set avg-speed 0
-  setup-initial-car
+  ask car-data [
+    setup-initial-car
+  ]
+
   reset-ticks
 end
 
