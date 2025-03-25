@@ -3,53 +3,34 @@ extensions [array]
 globals
 [
   tick-advance-amount
-  max-speed
+  ;;;max_speed
+  ;;;random_speed_adjustment
+  ;;; car count
 ]
 
 breed [ car-data car ]
-breed [ street-data street ]
-breed [ crossroad-data crossroad ]
-breed [ point-data point ]
 
 car-data-own
 [
   speed
   acceleration
-  direction
   random_speed
   is_breaking
   reaction_time
 ]
 
-street-data-own
-[
-  point-A
-  point-B
-]
-
-crossroad-data-own
-[
-  input_streets
-  output_streets
-]
-
-point-data-own
-[
-  pos
-]
 
 to setup
   clear-all
   set tick-advance-amount 0.01
   ;;;set avg-speed 0
-
+  setup-initial-car
   reset-ticks
 end
 
 to setup-initial-car
   set speed 0
   set acceleration 0
-  set direction 0
   set random_speed random random_speed_adjustment - random random_speed_adjustment
   set is_breaking false
   set reaction_time precision ((random-float 0.2) + 0.2) 3
@@ -70,6 +51,7 @@ end
 
 
 to go
+
 
 end
 @#$#@#$#@
@@ -141,7 +123,7 @@ max_speed
 max_speed
 10
 100
-43.0
+44.0
 1
 1
 NIL
@@ -201,44 +183,14 @@ HORIZONTAL
 
 SLIDER
 11
-228
+166
 205
-261
+199
 random_speed_adjustment
 random_speed_adjustment
 0
 max_speed
-0.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-11
-154
-204
-187
-points
-points
-3
-50
-5.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-12
-192
-204
-225
-streets
-streets
-points
-points * 2
-8.0
+1.0
 1
 1
 NIL
