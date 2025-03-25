@@ -3,7 +3,7 @@ extensions [array]
 globals
 [
   tick-advance-amount
-  avg-speed
+  max-speed
 ]
 
 breed [ car-data car ]
@@ -41,7 +41,7 @@ point-data-own
 to setup
   clear-all
   set tick-advance-amount 0.01
-  set avg-speed 0
+  ;;;set avg-speed 0
 
   reset-ticks
 end
@@ -64,6 +64,12 @@ to setup-streets
 end
 ;; todo
 to setup-crossroads
+
+end
+
+
+
+to go
 
 end
 @#$#@#$#@
@@ -112,10 +118,10 @@ HORIZONTAL
 BUTTON
 22
 265
-134
+173
 298
-start simulation
-Start
+setup simulation
+setup
 NIL
 1
 T
@@ -172,7 +178,7 @@ halt_speed
 halt_speed
 0
 max_speed
-1.0
+0.0
 1
 1
 NIL
@@ -237,6 +243,23 @@ points * 2
 1
 NIL
 HORIZONTAL
+
+BUTTON
+23
+303
+169
+336
+start simulation
+go
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
