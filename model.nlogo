@@ -1,6 +1,6 @@
 globals [
   sample-car
-  ;speed-limit  ;currently it works with speedlimit 1. I hope
+  ;speed-limit  ;initially speed limit was set to 1
   speed-min
 ]
 
@@ -11,7 +11,7 @@ turtles-own [
 
 to setup
   clear-all
-  set speed-limit 1
+  ;set speed-limit 1
   set speed-min 0
   ask patches [ setup-road ]
   setup-cars
