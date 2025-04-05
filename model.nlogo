@@ -1,6 +1,6 @@
 globals [
   sample-car
-  speed-limit
+  ;speed-limit
   speed-min
 ]
 
@@ -57,6 +57,39 @@ to separate-cars ;; turtle procedure
 end
 
 to go
+  ask turtles [
+
+    ifelse ycor > 0 and can_switch ;;;if is in left lane and is there free in right, change lanes
+    [
+      switch_lane
+    ]
+    [
+      let car-ahead one-of turtles-on patch-ahead 1
+      ifelse car-ahead != nobody
+      [
+        ifelse can_switch
+        [
+          switch_lane
+        ]
+        [
+          ;set color green ;;; debugging
+          slow-down-car car-ahead
+        ]
+      ]
+      [
+        speed-up-car
+      ]
+    ]
+
+
+    if speed < speed-min [ set speed speed-min ]
+    if speed > speed-limit [ set speed speed-limit ]
+    fd speed
+  ]
+  tick
+end
+
+to go_old
   ;; if there is a car right ahead of you, match its speed then slow down
   ask turtles [
 
@@ -72,7 +105,7 @@ to go
           switch_lane
         ]
         [
-          set color green
+          ;set color green ;;; debugging
           slow-down-car car-ahead
         ]
       ]
@@ -96,11 +129,11 @@ end
 
 to switch_lane
   ifelse ycor > 0 [set ycor -2 ] [set ycor 2 ]
-  set speed speed - deceleration
+  set speed speed - deceleration * 2
   ;;;set color green
 end
 
-to-report can_switch
+to-report can_switch ;;;reporter = function that return something
   let other-lane-patch patch-right-and-ahead 90 4
   ifelse ycor > 0
   [
@@ -111,7 +144,7 @@ to-report can_switch
   ]
     let olp-x [pxcor] of other-lane-patch
     let olp-y [pycor] of other-lane-patch
-    let of1 patch (olp-x + 1) olp-y
+    let of1 patch (olp-x + 1) olp-y ;;but maybe it make sense to look to other direction "behid" not forward"
     let of2 patch (olp-x + 2) olp-y
     report (not any? turtles-on other-lane-patch) and
            (not any? turtles-on of1) and
@@ -119,10 +152,10 @@ to-report can_switch
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-14
-251
-685
-481
+15
+370
+686
+600
 -1
 -1
 13.0
@@ -146,10 +179,10 @@ ticks
 30.0
 
 BUTTON
-36
-72
-108
-113
+30
+105
+102
+146
 NIL
 setup
 NIL
@@ -163,10 +196,10 @@ NIL
 1
 
 BUTTON
-119
-73
-190
 113
+106
+184
+146
 NIL
 go
 T
@@ -180,25 +213,25 @@ NIL
 0
 
 SLIDER
-12
-34
-216
-67
+10
+20
+182
+51
 number-of-cars
 number-of-cars
 1
-41
-32.0
+50
+31.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-121
-180
-266
-213
+116
+332
+261
+365
 deceleration
 deceleration
 0
@@ -210,10 +243,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-121
-145
-266
-178
+115
+290
+260
+323
 acceleration
 acceleration
 0
@@ -245,10 +278,10 @@ PENS
 "max speed" 1.0 0 -10899396 true "" "plot max [speed] of turtles"
 
 MONITOR
-17
-145
-114
-190
+11
+290
+108
+335
 red car speed
 ifelse-value any? turtles\n  [   [speed] of sample-car  ]\n  [  0 ]
 3
@@ -256,13 +289,45 @@ ifelse-value any? turtles\n  [   [speed] of sample-car  ]\n  [  0 ]
 11
 
 BUTTON
-200
-75
-263
+194
 108
+257
+141
 NIL
 go
 NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+15
+60
+187
+93
+speed-limit
+speed-limit
+0
+1
+1.0
+0.05
+1
+NIL
+HORIZONTAL
+
+BUTTON
+25
+210
+102
+243
+NIL
+go_old
+T
 1
 T
 OBSERVER
