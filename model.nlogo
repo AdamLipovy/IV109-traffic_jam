@@ -1,11 +1,12 @@
 globals [
   sample-car
-  ;speed-limit
+  ;speed-limit  ;currently it works with speedlimit 1. I hope
   speed-min
 ]
 
 turtles-own [
   speed
+  own-max-speed
 ]
 
 to setup
@@ -14,11 +15,12 @@ to setup
   set speed-min 0
   ask patches [ setup-road ]
   setup-cars
-  watch sample-car
+  watch sample-car ;make the "light" around samle cap
   reset-ticks
 end
 
 to setup-road ;; patch procedure
+              ;;changing colours, current patches are on ycor 2 and -2 (maybe it doesn't make sense honestly and maybe we can make global variable out of it)
   if pycor < 5 and pycor > 1 [ set pcolor white ]
   if pycor > -5 and pycor < -1 [ set pcolor white ]
 
@@ -39,12 +41,16 @@ to setup-cars
     set xcor random-xcor
     set ycor -2
     set heading 90
-    ;; set initial speed to be in range 0.1 to 1.0
-    set speed 0.1 + random-float 0.9
+    ;; set initial speed between 0.1 and speed limit
+    set speed 0.1 + random-float (speed-limit - speed)
     separate-cars
   ]
   set sample-car one-of turtles
   ask sample-car [ set color red ]
+
+  ask turtles [
+    set own-max-speed (random-float 0.1) + speed-limit - 0.05 ;;this is bit of random
+  ]
 end
 
 ; this procedure is needed so when we click "Setup" we
@@ -81,15 +87,13 @@ to go
       ]
     ]
 
-
-    if speed < speed-min [ set speed speed-min ]
-    if speed > speed-limit [ set speed speed-limit ]
-    fd speed
+    move-car
   ]
   tick
 end
 
-to go_old
+to go_old ;;primary keep driving in current lane, switch just when there is somebody in front
+          ;;we can keep diferetn "go" funcition as "different strategies" of run them simultaneously under each other
   ;; if there is a car right ahead of you, match its speed then slow down
   ask turtles [
 
@@ -110,16 +114,21 @@ to go_old
         ]
       ]
       [ speed-up-car ] ;; otherwise, speed up
-    ;; don't slow down below speed minimum or speed up beyond speed limit
-    if speed < speed-min [ set speed speed-min ]
-    if speed > speed-limit [ set speed speed-limit ]
-    fd speed
+
+    move-car
   ]
   tick
 end
 
+to move-car
+  ;; don't slow down below speed minimum or speed up beyond speed limit
+  if speed < speed-min [ set speed speed-min ]
+  if speed > own-max-speed [ set speed own-max-speed ] ;here was initially speed-limit, changed it individual max speed
+  fd speed
+end
+
 to slow-down-car [ car-ahead ] ;; turtle procedure
-  ;; slow down so you are driving more slowly than the car ahead of you
+  ;; slow down so you are driving more slowly than car ahead
   set speed [ speed ] of car-ahead - deceleration
 end
 
@@ -134,21 +143,25 @@ to switch_lane
 end
 
 to-report can_switch ;;;reporter = function that return something
-  let other-lane-patch patch-right-and-ahead 90 4
+  let other-lane-patch patch-right-and-ahead 90 4 ;there must be some initialization here, so i just copied it.
   ifelse ycor > 0
   [
-    set other-lane-patch patch-right-and-ahead 90 4
+    set other-lane-patch patch-right-and-ahead 90 4  ;look in 90 degrees 4 patches to right. Idiotic i know
   ]
   [
     set other-lane-patch patch-left-and-ahead 90 4
   ]
-    let olp-x [pxcor] of other-lane-patch
-    let olp-y [pycor] of other-lane-patch
-    let of1 patch (olp-x + 1) olp-y ;;but maybe it make sense to look to other direction "behid" not forward"
-    let of2 patch (olp-x + 2) olp-y
+  let olp-x [pxcor] of other-lane-patch
+  let olp-y [pycor] of other-lane-patch
+    ;let of1 patch (olp-x + 1) olp-y ;;but maybe it make sense to look to other direction "behid" not forward"
+    ;let of2 patch (olp-x + 2) olp-y
+  let of1 patch (olp-x - 1) olp-y
+  let of2 patch (olp-x - 2) olp-y
+  let of3 patch (olp-x + 1) olp-y ;;but maybe still also one ahead, cuz if there is not this condition cars tends to keep switching too fast
     report (not any? turtles-on other-lane-patch) and
            (not any? turtles-on of1) and
-           (not any? turtles-on of2)
+           (not any? turtles-on of2) and
+           (not any? turtles-on of3)
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -221,7 +234,7 @@ number-of-cars
 number-of-cars
 1
 50
-31.0
+26.0
 1
 1
 NIL
@@ -236,7 +249,7 @@ deceleration
 deceleration
 0
 .099
-0.026
+0.03
 .001
 1
 NIL
@@ -251,7 +264,7 @@ acceleration
 acceleration
 0
 .0099
-0.0045
+0.005
 .0001
 1
 NIL
@@ -306,9 +319,9 @@ NIL
 1
 
 SLIDER
-15
+10
 60
-187
+182
 93
 speed-limit
 speed-limit
