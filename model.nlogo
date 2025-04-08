@@ -192,7 +192,7 @@ to switch_lane
 end
 
 to-report can_switch ;;;reporter = function that return something
-  if own-line-delay >= 0 ; if car was in line for long enough
+  if own-line-delay >= 0 and speed > 0; if car was in line for long enough
   [
     report false
   ]
@@ -418,17 +418,6 @@ lane-delay
 NIL
 HORIZONTAL
 
-MONITOR
-350
-295
-717
-340
-red car line delay
-ifelse-value any? turtles\n  [   [own-line-delay] of sample-car  ]\n  [  0 ]
-17
-1
-11
-
 SWITCH
 15
 200
@@ -449,7 +438,7 @@ barrier-top
 barrier-top
 -1
 50
-31.0
+40.0
 1
 1
 NIL

@@ -76,16 +76,17 @@ to setup-barriers
     ]
 
     ;; Create bottom barrier row
-
-    create-turtles 1 [
-      set color green
-      set xcor barrier-bottom - 25
-      set ycor -2
-      set heading 90
-      ;; set initial speed between 0.1 and speed limit
-      set speed 0
-      set own-line-delay 0
-      set is-car false
+    if barrier-bottom >= 0 [
+      create-turtles 1 [
+        set color green
+        set xcor barrier-bottom - 25
+        set ycor -2
+        set heading 90
+        ;; set initial speed between 0.1 and speed limit
+        set speed 0
+        set own-line-delay 0
+        set is-car false
+      ]
     ]
   ]
 end
@@ -191,7 +192,7 @@ to switch_lane
 end
 
 to-report can_switch ;;;reporter = function that return something
-  if own-line-delay >= 0 ; if car was in line for long enough
+  if own-line-delay >= 0 and speed > 0; if car was in line for long enough
   [
     report false
   ]
@@ -448,7 +449,7 @@ barrier-top
 barrier-top
 -1
 50
--1.0
+40.0
 1
 1
 NIL
@@ -463,7 +464,7 @@ barrier-bottom
 barrier-bottom
 -1
 50
-50.0
+24.0
 1
 1
 NIL
