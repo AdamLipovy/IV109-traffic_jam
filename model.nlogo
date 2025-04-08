@@ -7,6 +7,7 @@ globals [
 turtles-own [
   speed
   own-max-speed
+  own-line-delay
 ]
 
 to setup
@@ -43,6 +44,7 @@ to setup-cars
     set heading 90
     ;; set initial speed between 0.1 and speed limit
     set speed 0.1 + random-float (speed-limit - speed)
+    set own-line-delay 0
     separate-cars
   ]
   set sample-car one-of turtles
@@ -64,6 +66,12 @@ end
 
 to go
   ask turtles [
+
+    ifelse own-line-delay >= 0 ; decrements line swap delay
+    [
+      set own-line-delay (own-line-delay - 0.01)
+    ]
+    []
 
     ifelse ycor > 0 and can_switch ;;;if is in left lane and is there free in right, change lanes
     [
@@ -139,10 +147,16 @@ end
 to switch_lane
   ifelse ycor > 0 [set ycor -2 ] [set ycor 2 ]
   set speed speed - deceleration * 2
+  set own-line-delay lane-delay
   ;;;set color green
 end
 
 to-report can_switch ;;;reporter = function that return something
+  ifelse own-line-delay >= 0 ; if car was in line for long enough
+  [
+    report false
+  ]
+  []
   let other-lane-patch patch-right-and-ahead 90 4 ;there must be some initialization here, so i just copied it.
   ifelse ycor > 0
   [
@@ -229,7 +243,7 @@ SLIDER
 10
 20
 182
-51
+53
 number-of-cars
 number-of-cars
 1
@@ -349,6 +363,32 @@ NIL
 NIL
 NIL
 1
+
+SLIDER
+10
+160
+182
+193
+lane-delay
+lane-delay
+0
+2
+1.0
+0.01
+1
+NIL
+HORIZONTAL
+
+MONITOR
+350
+295
+717
+340
+red car line delay
+ifelse-value any? turtles\n  [   [own-line-delay] of sample-car  ]\n  [  0 ]
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
