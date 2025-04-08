@@ -72,6 +72,7 @@ to setup-barriers
         set own-line-delay 0
         set own-max-speed 0
         set is-car false
+        set shape "x"
       ]
     ]
 
@@ -86,6 +87,7 @@ to setup-barriers
         set speed 0
         set own-line-delay 0
         set is-car false
+        set shape "x"
       ]
     ]
   ]
