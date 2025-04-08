@@ -103,10 +103,7 @@ end
 to go
   ask turtles [
 
-    if not is-car
-    [
-      stop
-    ]
+
 
     if own-line-delay >= 0 ; decrements line swap delay
     [
@@ -417,17 +414,6 @@ lane-delay
 1
 NIL
 HORIZONTAL
-
-MONITOR
-350
-295
-717
-340
-red car line delay
-ifelse-value any? turtles\n  [   [own-line-delay] of sample-car  ]\n  [  0 ]
-17
-1
-11
 
 SWITCH
 15

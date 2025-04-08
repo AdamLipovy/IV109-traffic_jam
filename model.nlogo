@@ -145,6 +145,11 @@ to go_old ;;primary keep driving in current lane, switch just when there is some
   ;; if there is a car right ahead of you, match its speed then slow down
   ask turtles [
 
+    if not is-car
+    [
+      stop
+    ]
+
     let car-ahead one-of turtles-on patch-ahead 1
     ifelse car-ahead != nobody
       [
