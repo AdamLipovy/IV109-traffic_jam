@@ -76,17 +76,16 @@ to setup-barriers
     ]
 
     ;; Create bottom barrier row
-    if barrier-bottom >= 0 [
-      create-turtles 1 [
-        set color green
-        set xcor barrier-bottom - 25
-        set ycor -2
-        set heading 90
-        ;; set initial speed between 0.1 and speed limit
-        set speed 0
-        set own-line-delay 0
-        set is-car false
-      ]
+
+    create-turtles 1 [
+      set color green
+      set xcor barrier-bottom - 25
+      set ycor -2
+      set heading 90
+      ;; set initial speed between 0.1 and speed limit
+      set speed 0
+      set own-line-delay 0
+      set is-car false
     ]
   ]
 end
@@ -449,7 +448,7 @@ barrier-top
 barrier-top
 -1
 50
-31.0
+-1.0
 1
 1
 NIL
@@ -464,7 +463,7 @@ barrier-bottom
 barrier-bottom
 -1
 50
-24.0
+50.0
 1
 1
 NIL
