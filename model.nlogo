@@ -193,13 +193,13 @@ end
 
 to switch_lane
   ifelse ycor > 0 [set ycor -2 ] [set ycor 2 ]
-  set speed speed - deceleration * 2
+  set speed speed - deceleration
   set own-line-delay lane-delay
   ;;;set color green
 end
 
 to-report can_switch ;;;reporter = function that return something
-  if own-line-delay >= 0 and speed > 0; if car was in line for long enough
+  if own-line-delay >= 0 ;and speed > 0; if car was in line for long enough
   [
     report false
   ]
@@ -294,7 +294,7 @@ number-of-cars
 number-of-cars
 1
 50
-26.0
+9.0
 1
 1
 NIL
@@ -309,7 +309,7 @@ deceleration
 deceleration
 0
 .099
-0.03
+0.015
 .001
 1
 NIL
@@ -419,7 +419,7 @@ lane-delay
 lane-delay
 0
 2
-1.0
+0.1
 0.01
 1
 NIL
@@ -445,7 +445,7 @@ barrier-top
 barrier-top
 -1
 50
-40.0
+-1.0
 1
 1
 NIL
@@ -460,7 +460,7 @@ barrier-bottom
 barrier-bottom
 -1
 50
-24.0
+25.0
 1
 1
 NIL
