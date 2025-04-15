@@ -10,8 +10,15 @@ auta:
     reakční doba
         podle jednotek
 
-nehoda (optional):
-    snížení viditelnosti
+TODO:
+    prumerna vzdalenost aut
+    úprava algoritmu řazení
+    změna spawnování aut
+    průměrný čas přejetí obrazovky
+    dát oba pruhy k sobě
+        animace přejezdu (optional)
+    zpřehlednit UI
+
 
 věta co musíme říct na té konzultaci
 Chceme zkoumat hustotu provozu při různých maximálních povolených rychlostech a různě dobré vyditelnosti, 
