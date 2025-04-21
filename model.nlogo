@@ -18,14 +18,14 @@ to setup
   ask patches [ setup-road ]
   setup-barriers
   setup-cars
-  watch sample-car ;make the "light" around samle cap
+  ;watch sample-car ;make the "light" around samle cap
   reset-ticks
 end
 
 to setup-road ;; patch procedure
               ;;changing colours, current patches are on ycor 2 and -2 (maybe it doesn't make sense honestly and maybe we can make global variable out of it)
-  if pycor < 5 and pycor > 1 [ set pcolor white ]
-  if pycor > -5 and pycor < -1 [ set pcolor white ]
+  if pycor = 1 [ set pcolor white ]
+  if pycor = -1 [ set pcolor white ]
 
 end
 
@@ -39,22 +39,38 @@ to setup-cars
     stop
   ]
   set-default-shape turtles "car"
-  create-turtles number-of-cars [
+
+  ;create-turtles number-of-cars [
+  ;  set color blue
+  ;  set xcor random-xcor
+  ;  set ycor -1
+  ;  set heading 90
+  ;  ;; set initial speed between 0.1 and speed limit
+  ;  set speed 0.1 + random-float (speed-limit - speed)
+  ;  set own-line-delay 0
+  ;  set is-car true
+  ;  separate-cars
+  ;]
+  ;set sample-car one-of turtles
+  ;ask sample-car [ set color red ]
+
+  ;ask turtles [
+  ;  set own-max-speed (random-float 0.1) + speed-limit - 0.05 ;;this is bit of random
+  ;]
+end
+
+to setup_one_car
+   create-turtles 1 [
     set color blue
-    set xcor random-xcor
-    set ycor -2
+    set xcor (min-pxcor + 3) ;;;nejde se dívat na místa "mimo", a my se u změny směru díváme o dvě dozadu a o jedno dopředu, proto to musí být odsazené
+    set ycor -1
     set heading 90
     ;; set initial speed between 0.1 and speed limit
     set speed 0.1 + random-float (speed-limit - speed)
+    set own-max-speed (random-float 0.1) + speed-limit - 0.05
     set own-line-delay 0
     set is-car true
     separate-cars
-  ]
-  set sample-car one-of turtles
-  ask sample-car [ set color red ]
-
-  ask turtles [
-    set own-max-speed (random-float 0.1) + speed-limit - 0.05 ;;this is bit of random
   ]
 end
 
@@ -65,7 +81,7 @@ to setup-barriers
       create-turtles 1 [
         set color green
         set xcor barrier-top - 25
-        set ycor 2
+        set ycor 1
         set heading 90
         ;; set initial speed between 0.1 and speed limit
         set speed 0
@@ -81,7 +97,7 @@ to setup-barriers
       create-turtles 1 [
         set color green
         set xcor barrier-bottom - 25
-        set ycor -2
+        set ycor -1
         set heading 90
         ;; set initial speed between 0.1 and speed limit
         set speed 0
@@ -138,7 +154,13 @@ to go
     ]
 
     move-car
+
+    ;;remove when they leave right end
+    if xcor > (max-pxcor - 2) [ die ]
   ]
+
+  if ticks mod spawn_frequency = 0 [ setup_one_car ]
+
   tick
 end
 
@@ -192,7 +214,7 @@ to speed-up-car ;; turtle procedure
 end
 
 to switch_lane
-  ifelse ycor > 0 [set ycor -2 ] [set ycor 2 ]
+  ifelse ycor > 0 [set ycor -1 ] [set ycor 1 ]
   set speed speed - deceleration
   set own-line-delay lane-delay
   ;;;set color green
@@ -203,13 +225,13 @@ to-report can_switch ;;;reporter = function that return something
   [
     report false
   ]
-  let other-lane-patch patch-right-and-ahead 90 4 ;there must be some initialization here, so i just copied it.
+  let other-lane-patch patch-right-and-ahead 90 2 ;there must be some initialization here, so i just copied it.
   ifelse ycor > 0
   [
-    set other-lane-patch patch-right-and-ahead 90 4  ;look in 90 degrees 4 patches to right. Idiotic i know
+    set other-lane-patch patch-right-and-ahead 90 2  ;look in 90 degrees 4 patches to right. Idiotic i know
   ]
   [
-    set other-lane-patch patch-left-and-ahead 90 4
+    set other-lane-patch patch-left-and-ahead 90 2
   ]
   let olp-x [pxcor] of other-lane-patch
   let olp-y [pycor] of other-lane-patch
@@ -225,26 +247,26 @@ to-report can_switch ;;;reporter = function that return something
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-15
-370
-686
-600
+10
+410
+987
+590
 -1
 -1
-13.0
+19.0
 1
 10
 1
 1
 1
 0
-1
+0
 0
 1
 -25
 25
--8
-8
+-4
+4
 1
 1
 1
@@ -252,10 +274,10 @@ ticks
 30.0
 
 BUTTON
-30
-105
-102
-146
+25
+145
+97
+186
 NIL
 setup
 NIL
@@ -269,10 +291,10 @@ NIL
 1
 
 BUTTON
-113
-106
-184
+108
 146
+179
+186
 NIL
 go
 T
@@ -294,17 +316,17 @@ number-of-cars
 number-of-cars
 1
 50
-9.0
+20.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-116
-332
-261
-365
+111
+372
+256
+405
 deceleration
 deceleration
 0
@@ -316,10 +338,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-115
-290
-260
-323
+110
+330
+255
+363
 acceleration
 acceleration
 0
@@ -346,15 +368,15 @@ true
 true
 "" ""
 PENS
-"red car" 1.0 0 -2674135 true "" "plot [speed] of sample-car"
-"min speed" 1.0 0 -13345367 true "" "plot min [speed] of turtles"
-"max speed" 1.0 0 -10899396 true "" "plot max [speed] of turtles"
+"min speed" 1.0 0 -13345367 true "" "ifelse count turtles > 0 [ plot min [speed] of turtles ][ plot 0 ]"
+"max speed" 1.0 0 -10899396 true "" "ifelse count turtles > 0 [ plot max [speed] of turtles ][ plot 0 ]"
+"mean speed" 1.0 0 -2674135 true "" "ifelse count turtles > 0 [ plot mean [speed] of turtles ][ plot 0 ]"
 
 MONITOR
-11
-290
-108
-335
+6
+330
+103
+375
 red car speed
 ifelse-value any? turtles\n  [   [speed] of sample-car  ]\n  [  0 ]
 3
@@ -362,10 +384,10 @@ ifelse-value any? turtles\n  [   [speed] of sample-car  ]\n  [  0 ]
 11
 
 BUTTON
-194
-108
-257
-141
+189
+148
+252
+181
 NIL
 go
 NIL
@@ -379,10 +401,10 @@ NIL
 1
 
 SLIDER
-10
-60
-182
-93
+5
+100
+177
+133
 speed-limit
 speed-limit
 0
@@ -394,10 +416,10 @@ NIL
 HORIZONTAL
 
 BUTTON
-10
-250
-87
-283
+5
+290
+82
+323
 NIL
 go_old
 T
@@ -411,10 +433,10 @@ NIL
 1
 
 SLIDER
-10
-160
-182
-193
+5
+200
+177
+233
 lane-delay
 lane-delay
 0
@@ -426,10 +448,10 @@ NIL
 HORIZONTAL
 
 SWITCH
-15
-200
-118
-233
+10
+240
+113
+273
 barriers
 barriers
 0
@@ -437,34 +459,67 @@ barriers
 -1000
 
 SLIDER
-140
-200
-312
-233
+135
+240
+307
+273
 barrier-top
 barrier-top
 -1
 50
--1.0
+17.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-140
-245
-312
-278
+135
+285
+307
+318
 barrier-bottom
 barrier-bottom
 -1
 50
-25.0
+35.0
 1
 1
 NIL
 HORIZONTAL
+
+SLIDER
+15
+60
+187
+93
+spawn_frequency
+spawn_frequency
+1
+50
+10.0
+1
+1
+NIL
+HORIZONTAL
+
+PLOT
+875
+105
+1405
+255
+plot 1
+NIL
+NIL
+0.0
+300.0
+0.0
+1.0
+true
+true
+"" ""
+PENS
+"percent of max speed" 1.0 0 -16777216 true "" "ifelse count turtles > 0 [ plot (mean [speed] of turtles) / speed-limit ][ plot 0 ]"
 
 @#$#@#$#@
 ## WHAT IS IT?
