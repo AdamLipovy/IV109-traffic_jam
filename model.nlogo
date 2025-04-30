@@ -246,6 +246,7 @@ to-report can_switch ;;;reporter = function that return something
     set olp-y 2
   ]
 
+  ;; car behind
   let pat turtles-in-box self 4 1 -2 olp-y
 
   if any? turtles-on pat[
@@ -270,6 +271,8 @@ to-report can_switch ;;;reporter = function that return something
     ]
   ]
   report True
+
+  ;; TODO car before
 
 
   ;; let of2 turtles-in-box self 1 1 0 0
@@ -358,7 +361,7 @@ number-of-cars
 number-of-cars
 1
 50
-20.0
+22.0
 1
 1
 NIL
@@ -373,7 +376,7 @@ deceleration
 deceleration
 0
 .099
-0.015
+0.0
 .001
 1
 NIL
@@ -388,7 +391,7 @@ acceleration
 acceleration
 0
 .0099
-0.005
+0.0047
 .0001
 1
 NIL
@@ -451,7 +454,7 @@ speed-limit
 speed-limit
 0
 1
-1.0
+0.3
 0.05
 1
 NIL
@@ -483,7 +486,7 @@ lane-delay
 lane-delay
 0
 2
-0.1
+0.8
 0.01
 1
 NIL
@@ -524,7 +527,7 @@ barrier-bottom
 barrier-bottom
 -1
 50
-35.0
+34.0
 1
 1
 NIL
@@ -539,7 +542,7 @@ spawn_frequency
 spawn_frequency
 1
 50
-10.0
+18.0
 1
 1
 NIL
@@ -968,6 +971,33 @@ setup
 repeat 180 [ go ]
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="experiment" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="500"/>
+    <metric>mean [speed] of turtles</metric>
+    <enumeratedValueSet variable="number-of-cars">
+      <value value="10"/>
+      <value value="20"/>
+      <value value="30"/>
+      <value value="40"/>
+      <value value="50"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="speed-limit">
+      <value value="1"/>
+      <value value="0.9"/>
+      <value value="0.8"/>
+      <value value="0.7"/>
+      <value value="0.6"/>
+      <value value="0.5"/>
+      <value value="0.4"/>
+      <value value="0.3"/>
+      <value value="0.2"/>
+      <value value="0.1"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
