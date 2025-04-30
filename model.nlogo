@@ -220,30 +220,72 @@ to switch_lane
   ;;;set color green
 end
 
+to-report turtles-in-box [t diameterx diametery ofx ofy]
+  report other turtles-on patches with [
+    pxcor >= [xcor] of t - diameterx + ofx and pxcor <= [xcor] of t + diameterx + ofx and
+    pycor >= [ycor] of t - diametery + ofy and pycor <= [ycor] of t + diametery + ofy
+  ]
+end
+
 to-report can_switch ;;;reporter = function that return something
   if own-line-delay >= 0 ;and speed > 0; if car was in line for long enough
   [
     report false
   ]
+
   let other-lane-patch patch-right-and-ahead 90 2 ;there must be some initialization here, so i just copied it.
+
+  let olp-y 0
+
   ifelse ycor > 0
   [
-    set other-lane-patch patch-right-and-ahead 90 2  ;look in 90 degrees 4 patches to right. Idiotic i know
+    ;;set other-lane-patch patch-right-and-ahead 90 2  ;look in 90 degrees 4 patches to right. Idiotic i know
+    set olp-y -2
   ]
   [
-    set other-lane-patch patch-left-and-ahead 90 2
+    set olp-y 2
   ]
-  let olp-x [pxcor] of other-lane-patch
-  let olp-y [pycor] of other-lane-patch
+
+  let pat turtles-in-box self 4 1 -2 olp-y
+
+  if any? turtles-on pat[
+
+    let nearby-one one-of pat
+    set pat turtles-in-box self 3 1 -1 olp-y
+
+    ifelse any? turtles-on pat[
+
+      set nearby-one one-of pat
+      set pat turtles-in-box self 2 1 0 olp-y
+      ifelse any? turtles-on pat [
+        report False
+      ]
+      [
+        report [speed] of nearby-one < acceleration * 5
+      ]
+    ]
+
+    [
+      report [speed] of nearby-one < acceleration * 10
+    ]
+  ]
+  report True
+
+
+  ;; let of2 turtles-in-box self 1 1 0 0
+  report (not any? pat) ;;and (not any? of2)
+
+  ;;let olp-x [pxcor] of other-lane-patch
+  ;;let olp-y [pycor] of other-lane-patch
     ;let of1 patch (olp-x + 1) olp-y ;;but maybe it make sense to look to other direction "behid" not forward"
     ;let of2 patch (olp-x + 2) olp-y
-  let of1 patch (olp-x - 1) olp-y
-  let of2 patch (olp-x - 2) olp-y
-  let of3 patch (olp-x + 1) olp-y ;;but maybe still also one ahead, cuz if there is not this condition cars tends to keep switching too fast
-    report (not any? turtles-on other-lane-patch) and
-           (not any? turtles-on of1) and
-           (not any? turtles-on of2) and
-           (not any? turtles-on of3)
+  ;;let of1 patch (olp-x - 1) olp-y
+  ;;let of2 patch (olp-x - 2) olp-y
+  ;;let of3 patch (olp-x + 1) olp-y ;;but maybe still also one ahead, cuz if there is not this condition cars tends to keep switching too fast
+  ;;  report (not any? turtles-on other-lane-patch) and
+  ;;         (not any? turtles-on of1) and
+  ;;         (not any? turtles-on of2) and
+  ;;         (not any? turtles-on of3)
 end
 @#$#@#$#@
 GRAPHICS-WINDOW

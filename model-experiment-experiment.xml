@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE experiments SYSTEM "behaviorspace.dtd">
+<experiments>
+  <experiment name="experiment" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="500"/>
+    <metric>mean [speed] of turtles</metric>
+    <enumeratedValueSet variable="number-of-cars">
+      <value value="10"/>
+      <value value="20"/>
+      <value value="30"/>
+      <value value="40"/>
+      <value value="50"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="speed-limit">
+      <value value="1"/>
+      <value value="0.9"/>
+      <value value="0.8"/>
+      <value value="0.7"/>
+      <value value="0.6"/>
+      <value value="0.5"/>
+      <value value="0.4"/>
+      <value value="0.3"/>
+      <value value="0.2"/>
+      <value value="0.1"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
