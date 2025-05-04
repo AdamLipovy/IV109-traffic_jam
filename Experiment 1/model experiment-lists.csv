@@ -1,0 +1,7 @@
+"BehaviorSpace results (NetLogo 6.4.0)","Lists version 2.0"
+"model.nlogo"
+"experiment"
+"04/30/2025 10:25:10:527 +0200"
+"min-pxcor","max-pxcor","min-pycor","max-pycor"
+"-25","25","-4","4"
+"[reporter]","[run number]","number-of-cars","speed-limit","[step]"
