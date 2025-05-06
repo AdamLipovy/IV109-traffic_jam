@@ -2,6 +2,7 @@ globals [
   sample-car
   ;speed-limit  ;initially speed limit was set to 1
   speed-min
+  disposed_cars
 ]
 
 turtles-own [
@@ -15,6 +16,7 @@ to setup
   clear-all
   ;set speed-limit 1
   set speed-min 0
+  set disposed_cars 0
   ask patches [ setup-road ]
   setup-barriers
   ;watch sample-car ;make the "light" around samle cap
@@ -29,19 +31,32 @@ to setup-road ;; patch procedure
 end
 
 to setup_one_car
+
+  let future_ycor -1
+  let start_patch patch (min-pxcor + 3) future_ycor
+  if any? turtles-on start_patch [
+    set future_ycor 1
+    set start_patch patch (min-pxcor + 3) future_ycor
+    if any? turtles-on start_patch [
+      set disposed_cars disposed_cars + 1
+      stop
+    ]
+  ]
+
    create-turtles 1 [
     set color blue
     set xcor (min-pxcor + 3) ;;;nejde se dívat na místa "mimo", a my se u změny směru díváme o dvě dozadu a o jedno dopředu, proto to musí být odsazené
-    set ycor -1
+    set ycor future_ycor
     set heading 90
     ;; set initial speed between 0.1 and speed limit
     set own-max-speed (random-float 0.1) + speed-limit - 0.05
     set speed speed-limit ;;;0.1 + random-float (speed-limit - speed)
     set own-line-delay 0
     set is-car true
-    separate-cars
+    set shape "car"
   ]
 end
+
 
 to setup-barriers
   if barriers [
@@ -78,14 +93,6 @@ to setup-barriers
   ]
 end
 
-; this procedure is needed so when we click "Setup" we
-; don't end up with any two cars on the same patch
-to separate-cars ;; turtle procedure
-  if any? other turtles-here [
-    fd 1
-    separate-cars
-  ]
-end
 
 to go
   ask turtles [
@@ -128,8 +135,17 @@ to go
     if xcor > (max-pxcor - 2) [ die ]
   ]
 
-  if ticks mod spawn_frequency = 0 [ setup_one_car ]
+  ;if ticks mod spawn_period = 0 [ setup_one_car ]
 
+  ifelse (ticks mod spawn_period) = 0 [
+    setup_one_car
+  ]
+  [
+    if disposed_cars > 0 [
+      setup_one_car
+      set disposed_cars (disposed_cars - 1)
+    ]
+  ]
   tick
 end
 
@@ -248,7 +264,30 @@ to-report just-cars
   report turtles with [is-car = true]
 end
 
-;; TODO for mean, min, max
+to-report mean_speed
+  let aux just-cars
+  ifelse (count aux) > 0 [ report (mean [speed] of aux )] [ report speed-limit ]
+end
+
+to-report min_speed
+  let aux just-cars
+  ifelse count aux > 0 [ report (min [speed] of just-cars) ][ report speed-limit ]
+end
+
+to-report max_speed
+  let aux just-cars
+  ifelse count aux > 0 [ report (max [speed] of just-cars) ][ report speed-limit ]
+end
+
+
+to-report mean_speed_complex
+  let car_list just-cars
+  let n count car_list
+  if n = 0 [report speed-limit]
+
+  let speed_sum sum [speed] of car_list
+  report speed_sum / (n + disposed_cars)
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 10
@@ -278,10 +317,10 @@ ticks
 30.0
 
 BUTTON
-25
-145
-97
-186
+0
+100
+72
+141
 NIL
 setup
 NIL
@@ -295,10 +334,10 @@ NIL
 1
 
 BUTTON
-108
-146
-179
-186
+83
+101
+154
+141
 NIL
 go
 T
@@ -312,10 +351,10 @@ NIL
 0
 
 SLIDER
-111
-372
-256
-405
+15
+370
+160
+403
 deceleration
 deceleration
 0
@@ -327,10 +366,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-110
-330
-255
-363
+14
+328
+159
+361
 acceleration
 acceleration
 0
@@ -342,10 +381,10 @@ NIL
 HORIZONTAL
 
 PLOT
-286
-20
-704
-217
+260
+10
+678
+207
 Car speeds
 time
 speed
@@ -357,15 +396,15 @@ true
 true
 "" ""
 PENS
-"min speed" 1.0 0 -13345367 true "" "ifelse count turtles > 0 [ plot min [speed] of just-cars ][ plot 0 ]"
-"max speed" 1.0 0 -10899396 true "" "ifelse count turtles > 0 [ plot max [speed] of just-cars][ plot 0 ]"
-"mean speed" 1.0 0 -2674135 true "" "ifelse count turtles > 0 [ plot mean [speed] of just-cars ][ plot 0 ]"
+"min speed" 1.0 0 -13345367 true "" "plot min_speed"
+"max speed" 1.0 0 -10899396 true "" "plot max_speed"
+"mean speed" 1.0 0 -2674135 true "" "plot mean_speed"
 
 BUTTON
-189
-148
-252
-181
+164
+103
+227
+136
 NIL
 go
 NIL
@@ -379,15 +418,15 @@ NIL
 1
 
 SLIDER
-5
-100
-177
-133
+0
+60
+172
+93
 speed-limit
 speed-limit
 0.1
 1
-0.35
+0.45
 0.05
 1
 NIL
@@ -395,9 +434,9 @@ HORIZONTAL
 
 BUTTON
 5
-290
+160
 82
-323
+193
 NIL
 go_old
 T
@@ -411,10 +450,10 @@ NIL
 1
 
 SLIDER
-5
-200
-177
-233
+15
+285
+187
+318
 lane-delay
 lane-delay
 0
@@ -426,10 +465,10 @@ NIL
 HORIZONTAL
 
 SWITCH
-10
-240
-113
-273
+250
+280
+353
+313
 barriers
 barriers
 0
@@ -437,43 +476,28 @@ barriers
 -1000
 
 SLIDER
-135
-240
-307
-273
+250
+325
+422
+358
 barrier-top
 barrier-top
 -1
 50
-18.0
+34.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-135
-285
-307
-318
+250
+370
+422
+403
 barrier-bottom
 barrier-bottom
 -1
-50
-30.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-15
-60
-187
-93
-spawn_frequency
-spawn_frequency
-5
 50
 10.0
 1
@@ -481,12 +505,27 @@ spawn_frequency
 NIL
 HORIZONTAL
 
+SLIDER
+0
+15
+172
+48
+spawn_period
+spawn_period
+1
+50
+14.0
+1
+1
+NIL
+HORIZONTAL
+
 PLOT
-875
-105
-1405
-255
-plot 1
+720
+10
+1250
+205
+Car speed relative to speed limit
 NIL
 NIL
 0.0
@@ -497,12 +536,40 @@ true
 true
 "" ""
 PENS
-"percent of max speed" 1.0 0 -16777216 true "" "ifelse count turtles > 0 [ plot (mean [speed] of just-cars ) / speed-limit ][ plot 0 ]"
+"percent speed limit" 1.0 0 -16777216 true "" "plot mean_speed / speed-limit"
+
+MONITOR
+1030
+220
+1137
+265
+NIL
+disposed_cars
+17
+1
+11
+
+PLOT
+1150
+305
+1660
+455
+Car speed relative to speed limit inlcuding disposed cars
+NIL
+NIL
+0.0
+10.0
+0.0
+1.1
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot mean_speed_complex"
 
 @#$#@#$#@
 ## WHAT IS IT?
 
-This model models the movement of cars on a highway. Each car follows a simple set of rules: it slows down (decelerates) if it sees a car close ahead, and speeds up (accelerates) if it doesn't see a car ahead. The model demonstrates how traffic jams can form even without any accidents, broken bridges, or overturned trucks.  No "centralized cause" is needed for a traffic jam to form.
 
 ## HOW TO USE IT
 
@@ -516,105 +583,13 @@ The ACCELERATION slider controls the rate at which cars accelerate (speed up) wh
 
 When a car sees another car right in front, it matches that car's speed and then slows down a bit more.  How much slower it goes than the car in front of it is controlled by the DECELERATION slider.
 
-## THINGS TO NOTICE
 
-Traffic jams can start from small "seeds."  These cars start with random positions and random speeds. If some cars are clustered together, they will move slowly, causing cars behind them to slow down, and a traffic jam forms.
 
-Even though all of the cars are moving forward, the traffic jams tend to move backwards. This behavior is common in wave phenomena: the behavior of the group is often very different from the behavior of the individuals that make up the group.
 
-The plot shows three values as the model runs:
 
-* the fastest speed of any car (this doesn't exceed the speed limit!)
 
-* the slowest speed of any car
 
-* the speed of a single car (turtle 0), painted red so it can be watched.
 
-Notice not only the maximum and minimum, but also the variability -- the "jerkiness" of one vehicle.
-
-Notice that the default settings have cars decelerating much faster than they accelerate. This is typical of traffic flow models.
-
-Even though both ACCELERATION and DECELERATION are very small, the cars can achieve high speeds as these values are added or subtracted at each tick.
-
-## THINGS TO TRY
-
-In this model there are three sliders that can affect the tendency to create traffic jams: the initial NUMBER-OF-CARS, ACCELERATION, and DECELERATION.
-
-Look for patterns in how these settings affect the traffic flow.  Which variable has the greatest effect?  Do the patterns make sense?  Do they seem to be consistent with your driving experiences?
-
-Set DECELERATION to zero.  What happens to the flow?  Gradually increase DECELERATION while the model runs.  At what point does the flow "break down"?
-
-## EXTENDING THE MODEL
-
-Try other rules for speeding up and slowing down.  Is the rule presented here realistic? Are there other rules that are more accurate or represent better driving strategies?
-
-In reality, different vehicles may follow different rules. Try giving different rules or ACCELERATION/DECELERATION values to some of the cars.  Can one bad driver mess things up?
-
-The asymmetry between acceleration and deceleration is a simplified representation of different driving habits and response times. Can you explicitly encode these into the model?
-
-What could you change to minimize the chances of traffic jams forming?
-
-What could you change to make traffic jams move forward rather than backward?
-
-Make a model of two-lane traffic.
-
-## NETLOGO FEATURES
-
-The plot shows both global values and the value for a single car, which helps one watch overall patterns and individual behavior at the same time.
-
-The `watch` command is used to make it easier to focus on the red car.
-
-The `speed-limit` and `speed-min` variables are set to constant values. Since they are the same for every car, these variables could have been defined as globals rather than turtle variables. We have specified them as turtle variables since modifications or extensions to this model might well have every car with its own speed-limit values.
-
-## RELATED MODELS
-
-- "Traffic Basic Utility": a version of "Traffic Basic" including a utility function for the cars.
-
-- "Traffic Basic Adaptive": a version of "Traffic Basic" where cars adapt their acceleration to try and maintain a smooth flow of traffic.
-
-- "Traffic Basic Adaptive Individuals": a version of "Traffic Basic Adaptive" where each car adapts individually, instead of all cars adapting in unison.
-
-- "Traffic 2 Lanes": a more sophisticated two-lane version of the "Traffic Basic" model.
-
-- "Traffic Intersection": a model of cars traveling through a single intersection.
-
-- "Traffic Grid": a model of traffic moving in a city grid, with stoplights at the intersections.
-
-- "Traffic Grid Goal": a version of "Traffic Grid" where the cars have goals, namely to drive to and from work.
-
-- "Gridlock HubNet": a version of "Traffic Grid" where students control traffic lights in real-time.
-
-- "Gridlock Alternate HubNet": a version of "Gridlock HubNet" where students can enter NetLogo code to plot custom metrics.
-
-## HOW TO CITE
-
-If you mention this model or the NetLogo software in a publication, we ask that you include the citations below.
-
-For the model itself:
-
-* Wilensky, U. (1997).  NetLogo Traffic Basic model.  http://ccl.northwestern.edu/netlogo/models/TrafficBasic.  Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
-
-Please cite the NetLogo software as:
-
-* Wilensky, U. (1999). NetLogo. http://ccl.northwestern.edu/netlogo/. Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
-
-## COPYRIGHT AND LICENSE
-
-Copyright 1997 Uri Wilensky.
-
-![CC BY-NC-SA 3.0](http://ccl.northwestern.edu/images/creativecommons/byncsa.png)
-
-This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 License.  To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/3.0/ or send a letter to Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.
-
-Commercial licenses are also available. To inquire about commercial licenses, please contact Uri Wilensky at uri@northwestern.edu.
-
-This model was created as part of the project: CONNECTED MATHEMATICS: MAKING SENSE OF COMPLEX PHENOMENA THROUGH BUILDING OBJECT-BASED PARALLEL MODELS (OBPML).  The project gratefully acknowledges the support of the National Science Foundation (Applications of Advanced Technologies Program) -- grant numbers RED #9552950 and REC #9632612.
-
-This model was developed at the MIT Media Lab using CM StarLogo.  See Resnick, M. (1994) "Turtles, Termites and Traffic Jams: Explorations in Massively Parallel Microworlds."  Cambridge, MA: MIT Press.  Adapted to StarLogoT, 1997, as part of the Connected Mathematics Project.
-
-This model was converted to NetLogo as part of the projects: PARTICIPATORY SIMULATIONS: NETWORK-BASED DESIGN FOR SYSTEMS LEARNING IN CLASSROOMS and/or INTEGRATED SIMULATION AND MODELING ENVIRONMENT. The project gratefully acknowledges the support of the National Science Foundation (REPP & ROLE programs) -- grant numbers REC #9814682 and REC-0126227. Converted from StarLogoT to NetLogo, 2001.
-
-<!-- 1997 2001 MIT -->
 @#$#@#$#@
 default
 true
