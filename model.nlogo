@@ -3,6 +3,7 @@ globals [
   ;speed-limit  ;initially speed limit was set to 1
   speed-min
   disposed_cars
+  tick_of_first_disposed
 ]
 
 turtles-own [
@@ -17,6 +18,7 @@ to setup
   ;set speed-limit 1
   set speed-min 0
   set disposed_cars 0
+  set tick_of_first_disposed -1
   ask patches [ setup-road ]
   setup-barriers
   ;watch sample-car ;make the "light" around samle cap
@@ -38,7 +40,8 @@ to setup_one_car
     set future_ycor 1
     set start_patch patch (min-pxcor + 3) future_ycor
     if any? turtles-on start_patch [
-      set disposed_cars disposed_cars + 1
+      if (tick_of_first_disposed = -1) [set tick_of_first_disposed ticks]
+      set disposed_cars (disposed_cars + 1)
       stop
     ]
   ]
@@ -426,7 +429,7 @@ speed-limit
 speed-limit
 0.1
 1
-0.45
+0.65
 0.05
 1
 NIL
@@ -514,7 +517,7 @@ spawn_period
 spawn_period
 1
 50
-14.0
+5.0
 1
 1
 NIL
@@ -539,10 +542,10 @@ PENS
 "percent speed limit" 1.0 0 -16777216 true "" "plot mean_speed / speed-limit"
 
 MONITOR
-1030
-220
-1137
-265
+1130
+240
+1237
+285
 NIL
 disposed_cars
 17
@@ -550,10 +553,10 @@ disposed_cars
 11
 
 PLOT
-1150
-305
-1660
-455
+1125
+310
+1635
+460
 Car speed relative to speed limit inlcuding disposed cars
 NIL
 NIL
@@ -566,6 +569,17 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "plot mean_speed_complex"
+
+MONITOR
+1290
+240
+1442
+285
+NIL
+tick_of_first_disposed
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
