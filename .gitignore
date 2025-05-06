@@ -1,2 +1,5 @@
+
+*.csv
+
 # temporary net logo files
 .*.tmp.nlogo

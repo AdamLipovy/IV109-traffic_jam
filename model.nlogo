@@ -17,7 +17,6 @@ to setup
   set speed-min 0
   ask patches [ setup-road ]
   setup-barriers
-  setup-cars
   ;watch sample-car ;make the "light" around samle cap
   reset-ticks
 end
@@ -29,36 +28,6 @@ to setup-road ;; patch procedure
 
 end
 
-to setup-cars
-  if number-of-cars > world-width [
-    user-message (word
-      "There are too many cars for the amount of road. "
-      "Please decrease the NUMBER-OF-CARS slider to below "
-      (world-width + 1) " and press the SETUP button again. "
-      "The setup has stopped.")
-    stop
-  ]
-  set-default-shape turtles "car"
-
-  ;create-turtles number-of-cars [
-  ;  set color blue
-  ;  set xcor random-xcor
-  ;  set ycor -1
-  ;  set heading 90
-  ;  ;; set initial speed between 0.1 and speed limit
-  ;  set speed 0.1 + random-float (speed-limit - speed)
-  ;  set own-line-delay 0
-  ;  set is-car true
-  ;  separate-cars
-  ;]
-  ;set sample-car one-of turtles
-  ;ask sample-car [ set color red ]
-
-  ;ask turtles [
-  ;  set own-max-speed (random-float 0.1) + speed-limit - 0.05 ;;this is bit of random
-  ;]
-end
-
 to setup_one_car
    create-turtles 1 [
     set color blue
@@ -66,8 +35,8 @@ to setup_one_car
     set ycor -1
     set heading 90
     ;; set initial speed between 0.1 and speed limit
-    set speed 0.1 + random-float (speed-limit - speed)
     set own-max-speed (random-float 0.1) + speed-limit - 0.05
+    set speed speed-limit ;;;0.1 + random-float (speed-limit - speed)
     set own-line-delay 0
     set is-car true
     separate-cars
@@ -272,24 +241,14 @@ to-report can_switch ;;;reporter = function that return something
   ]
   report True
 
-  ;; TODO car before
-
-
-  ;; let of2 turtles-in-box self 1 1 0 0
-  report (not any? pat) ;;and (not any? of2)
-
-  ;;let olp-x [pxcor] of other-lane-patch
-  ;;let olp-y [pycor] of other-lane-patch
-    ;let of1 patch (olp-x + 1) olp-y ;;but maybe it make sense to look to other direction "behid" not forward"
-    ;let of2 patch (olp-x + 2) olp-y
-  ;;let of1 patch (olp-x - 1) olp-y
-  ;;let of2 patch (olp-x - 2) olp-y
-  ;;let of3 patch (olp-x + 1) olp-y ;;but maybe still also one ahead, cuz if there is not this condition cars tends to keep switching too fast
-  ;;  report (not any? turtles-on other-lane-patch) and
-  ;;         (not any? turtles-on of1) and
-  ;;         (not any? turtles-on of2) and
-  ;;         (not any? turtles-on of3)
+  report (not any? pat)
 end
+
+to-report just-cars
+  report turtles with [is-car = true]
+end
+
+;; TODO for mean, min, max
 @#$#@#$#@
 GRAPHICS-WINDOW
 10
@@ -353,21 +312,6 @@ NIL
 0
 
 SLIDER
-10
-20
-182
-53
-number-of-cars
-number-of-cars
-1
-50
-22.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
 111
 372
 256
@@ -376,8 +320,8 @@ deceleration
 deceleration
 0
 .099
-0.0
-.001
+0.045
+.005
 1
 NIL
 HORIZONTAL
@@ -390,9 +334,9 @@ SLIDER
 acceleration
 acceleration
 0
-.0099
-0.0047
-.0001
+.099
+0.075
+.005
 1
 NIL
 HORIZONTAL
@@ -413,20 +357,9 @@ true
 true
 "" ""
 PENS
-"min speed" 1.0 0 -13345367 true "" "ifelse count turtles > 0 [ plot min [speed] of turtles ][ plot 0 ]"
-"max speed" 1.0 0 -10899396 true "" "ifelse count turtles > 0 [ plot max [speed] of turtles ][ plot 0 ]"
-"mean speed" 1.0 0 -2674135 true "" "ifelse count turtles > 0 [ plot mean [speed] of turtles ][ plot 0 ]"
-
-MONITOR
-6
-330
-103
-375
-red car speed
-ifelse-value any? turtles\n  [   [speed] of sample-car  ]\n  [  0 ]
-3
-1
-11
+"min speed" 1.0 0 -13345367 true "" "ifelse count turtles > 0 [ plot min [speed] of just-cars ][ plot 0 ]"
+"max speed" 1.0 0 -10899396 true "" "ifelse count turtles > 0 [ plot max [speed] of just-cars][ plot 0 ]"
+"mean speed" 1.0 0 -2674135 true "" "ifelse count turtles > 0 [ plot mean [speed] of just-cars ][ plot 0 ]"
 
 BUTTON
 189
@@ -452,9 +385,9 @@ SLIDER
 133
 speed-limit
 speed-limit
-0
+0.1
 1
-0.3
+0.35
 0.05
 1
 NIL
@@ -486,7 +419,7 @@ lane-delay
 lane-delay
 0
 2
-0.8
+0.0
 0.01
 1
 NIL
@@ -512,7 +445,7 @@ barrier-top
 barrier-top
 -1
 50
-17.0
+18.0
 1
 1
 NIL
@@ -527,7 +460,7 @@ barrier-bottom
 barrier-bottom
 -1
 50
-34.0
+30.0
 1
 1
 NIL
@@ -540,9 +473,9 @@ SLIDER
 93
 spawn_frequency
 spawn_frequency
-1
+5
 50
-18.0
+10.0
 1
 1
 NIL
@@ -564,7 +497,7 @@ true
 true
 "" ""
 PENS
-"percent of max speed" 1.0 0 -16777216 true "" "ifelse count turtles > 0 [ plot (mean [speed] of turtles) / speed-limit ][ plot 0 ]"
+"percent of max speed" 1.0 0 -16777216 true "" "ifelse count turtles > 0 [ plot (mean [speed] of just-cars ) / speed-limit ][ plot 0 ]"
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -995,6 +928,40 @@ repeat 180 [ go ]
       <value value="0.3"/>
       <value value="0.2"/>
       <value value="0.1"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="experiment complex" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="5000"/>
+    <metric>mean [speed] of turtles</metric>
+    <enumeratedValueSet variable="spawn_frequency">
+      <value value="10"/>
+      <value value="20"/>
+      <value value="30"/>
+      <value value="40"/>
+      <value value="50"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="speed-limit">
+      <value value="1"/>
+      <value value="0.9"/>
+      <value value="0.8"/>
+      <value value="0.7"/>
+      <value value="0.6"/>
+      <value value="0.5"/>
+      <value value="0.4"/>
+      <value value="0.3"/>
+      <value value="0.2"/>
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="acceleration">
+      <value value="0.01"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="deceleration">
+      <value value="0.04"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="lane-delay">
+      <value value="0"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
