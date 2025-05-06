@@ -602,7 +602,6 @@ When a car sees another car right in front, it matches that car's speed and then
 
 
 
-
 @#$#@#$#@
 default
 true
@@ -922,7 +921,7 @@ repeat 180 [ go ]
     <setup>setup</setup>
     <go>go</go>
     <timeLimit steps="2000"/>
-    <metric>mean [speed] of turtles</metric>
+    <metric>mean_speed</metric>
     <enumeratedValueSet variable="spawn_period">
       <value value="5"/>
       <value value="10"/>
