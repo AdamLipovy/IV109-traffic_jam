@@ -429,7 +429,7 @@ speed-limit
 speed-limit
 0.1
 1
-0.65
+0.3
 0.05
 1
 NIL
@@ -487,7 +487,7 @@ barrier-top
 barrier-top
 -1
 50
-34.0
+-1.0
 1
 1
 NIL
@@ -502,7 +502,7 @@ barrier-bottom
 barrier-bottom
 -1
 50
-10.0
+32.0
 1
 1
 NIL
@@ -596,7 +596,6 @@ Click on GO to start the cars moving.  Note that they wrap around the world as t
 The ACCELERATION slider controls the rate at which cars accelerate (speed up) when there are no cars ahead.
 
 When a car sees another car right in front, it matches that car's speed and then slows down a bit more.  How much slower it goes than the car in front of it is controlled by the DECELERATION slider.
-
 
 
 
@@ -922,14 +921,14 @@ repeat 180 [ go ]
   <experiment name="experiment complex" repetitions="1" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
-    <timeLimit steps="5000"/>
+    <timeLimit steps="2000"/>
     <metric>mean [speed] of turtles</metric>
-    <enumeratedValueSet variable="spawn_frequency">
+    <enumeratedValueSet variable="spawn_period">
+      <value value="5"/>
       <value value="10"/>
+      <value value="15"/>
       <value value="20"/>
-      <value value="30"/>
-      <value value="40"/>
-      <value value="50"/>
+      <value value="25"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="speed-limit">
       <value value="1"/>
@@ -951,6 +950,50 @@ repeat 180 [ go ]
     </enumeratedValueSet>
     <enumeratedValueSet variable="lane-delay">
       <value value="0"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="experiment_first_disposed_tick" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="1000"/>
+    <exitCondition>disposed_cars &gt; 1</exitCondition>
+    <metric>tick_of_first_disposed</metric>
+    <enumeratedValueSet variable="lane-delay">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="barrier-bottom">
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="spawn_period">
+      <value value="5"/>
+      <value value="10"/>
+      <value value="15"/>
+      <value value="20"/>
+      <value value="25"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="barriers">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="acceleration">
+      <value value="0.075"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="barrier-top">
+      <value value="34"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="speed-limit">
+      <value value="0.1"/>
+      <value value="0.2"/>
+      <value value="0.3"/>
+      <value value="0.4"/>
+      <value value="0.5"/>
+      <value value="0.6"/>
+      <value value="0.7"/>
+      <value value="0.8"/>
+      <value value="0.9"/>
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="deceleration">
+      <value value="0.05"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
