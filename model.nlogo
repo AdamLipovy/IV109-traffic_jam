@@ -52,7 +52,7 @@ to setup_one_car
     set ycor future_ycor
     set heading 90
     ;; set initial speed between 0.1 and speed limit
-    set own-max-speed (random-float 0.1) + speed-limit - 0.05
+    set own-max-speed (random-float 0.2) + speed-limit - 0.1
     set speed speed-limit ;;;0.1 + random-float (speed-limit - speed)
     set own-line-delay 0
     set is-car true
@@ -115,19 +115,23 @@ to go
       switch_lane
     ]
     [
+      ;let car-ahead one-of turtles-in-box self 1 1 1 0
       let car-ahead one-of turtles-on patch-ahead 1
       ifelse car-ahead != nobody
       [
         ifelse can_switch
         [
+          ;set color red
           switch_lane
         ]
         [
           ;set color green ;;; debugging
+          ;slow-down-other car-ahead
           slow-down-car car-ahead
         ]
       ]
       [
+        ;set color blue
         speed-up-car
       ]
     ]
@@ -152,39 +156,6 @@ to go
   tick
 end
 
-;to go_old ;;primary keep driving in current lane, switch just when there is somebody in front
-;          ;;we can keep diferetn "go" funcition as "different strategies" of run them simultaneously under each other
-;  ;; if there is a car right ahead of you, match its speed then slow down
-;  ask turtles [
-;
-;    if not is-car
-;    [
-;      stop
-;    ]
-;
-;    let car-ahead one-of turtles-on patch-ahead 1
-;    ifelse car-ahead != nobody
-;      [
-;         ;;if there is enough space on the left lane, change lanes
-;        ;;;let left-lane-clear not any? turtles-on patch-left 1
-;        ;;;let left-lane-clear any? turtles-on patch-left-and-ahead 1 0
-;        let lane-clear can_switch
-;        ifelse lane-clear
-;        [
-;          switch_lane
-;        ]
-;        [
-;          ;set color green ;;; debugging
-;          slow-down-car car-ahead
-;        ]
-;      ]
-;      [ speed-up-car ] ;; otherwise, speed up
-;
-;    move-car
-;  ]
-;  tick
-;end
-
 to move-car
   ;; don't slow down below speed minimum or speed up beyond speed limit
   if speed < speed-min [ set speed speed-min ]
@@ -195,6 +166,10 @@ end
 to slow-down-car [ car-ahead ] ;; turtle procedure
   ;; slow down so you are driving more slowly than car ahead
   set speed [ speed ] of car-ahead - deceleration
+end
+
+to slow-down-other [ car-ahead ] ;; turtle procedure
+  set speed (speed - (([speed] of car-ahead - speed) / ((distance car-ahead) - 2)))
 end
 
 to speed-up-car ;; turtle procedure
@@ -429,7 +404,7 @@ speed-limit
 speed-limit
 0.1
 1
-0.3
+0.5
 0.05
 1
 NIL
@@ -444,7 +419,7 @@ lane-delay
 lane-delay
 0
 2
-0.2
+0.1
 0.01
 1
 NIL
@@ -470,7 +445,7 @@ barrier-top
 barrier-top
 -1
 50
--1.0
+36.0
 1
 1
 NIL
@@ -485,7 +460,7 @@ barrier-bottom
 barrier-bottom
 -1
 50
-32.0
+24.0
 1
 1
 NIL
@@ -500,7 +475,7 @@ spawn_period
 spawn_period
 1
 50
-10.0
+7.0
 1
 1
 NIL
@@ -579,8 +554,6 @@ Click on GO to start the cars moving.  Note that they wrap around the world as t
 The ACCELERATION slider controls the rate at which cars accelerate (speed up) when there are no cars ahead.
 
 When a car sees another car right in front, it matches that car's speed and then slows down a bit more.  How much slower it goes than the car in front of it is controlled by the DECELERATION slider.
-
-
 
 
 @#$#@#$#@
