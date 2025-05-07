@@ -152,38 +152,38 @@ to go
   tick
 end
 
-to go_old ;;primary keep driving in current lane, switch just when there is somebody in front
-          ;;we can keep diferetn "go" funcition as "different strategies" of run them simultaneously under each other
-  ;; if there is a car right ahead of you, match its speed then slow down
-  ask turtles [
-
-    if not is-car
-    [
-      stop
-    ]
-
-    let car-ahead one-of turtles-on patch-ahead 1
-    ifelse car-ahead != nobody
-      [
-         ;;if there is enough space on the left lane, change lanes
-        ;;;let left-lane-clear not any? turtles-on patch-left 1
-        ;;;let left-lane-clear any? turtles-on patch-left-and-ahead 1 0
-        let lane-clear can_switch
-        ifelse lane-clear
-        [
-          switch_lane
-        ]
-        [
-          ;set color green ;;; debugging
-          slow-down-car car-ahead
-        ]
-      ]
-      [ speed-up-car ] ;; otherwise, speed up
-
-    move-car
-  ]
-  tick
-end
+;to go_old ;;primary keep driving in current lane, switch just when there is somebody in front
+;          ;;we can keep diferetn "go" funcition as "different strategies" of run them simultaneously under each other
+;  ;; if there is a car right ahead of you, match its speed then slow down
+;  ask turtles [
+;
+;    if not is-car
+;    [
+;      stop
+;    ]
+;
+;    let car-ahead one-of turtles-on patch-ahead 1
+;    ifelse car-ahead != nobody
+;      [
+;         ;;if there is enough space on the left lane, change lanes
+;        ;;;let left-lane-clear not any? turtles-on patch-left 1
+;        ;;;let left-lane-clear any? turtles-on patch-left-and-ahead 1 0
+;        let lane-clear can_switch
+;        ifelse lane-clear
+;        [
+;          switch_lane
+;        ]
+;        [
+;          ;set color green ;;; debugging
+;          slow-down-car car-ahead
+;        ]
+;      ]
+;      [ speed-up-car ] ;; otherwise, speed up
+;
+;    move-car
+;  ]
+;  tick
+;end
 
 to move-car
   ;; don't slow down below speed minimum or speed up beyond speed limit
@@ -435,23 +435,6 @@ speed-limit
 NIL
 HORIZONTAL
 
-BUTTON
-5
-160
-82
-193
-NIL
-go_old
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
 SLIDER
 15
 285
@@ -461,7 +444,7 @@ lane-delay
 lane-delay
 0
 2
-0.0
+0.2
 0.01
 1
 NIL
@@ -517,7 +500,7 @@ spawn_period
 spawn_period
 1
 50
-5.0
+10.0
 1
 1
 NIL
@@ -596,8 +579,6 @@ Click on GO to start the cars moving.  Note that they wrap around the world as t
 The ACCELERATION slider controls the rate at which cars accelerate (speed up) when there are no cars ahead.
 
 When a car sees another car right in front, it matches that car's speed and then slows down a bit more.  How much slower it goes than the car in front of it is controlled by the DECELERATION slider.
-
-
 
 
 
@@ -993,6 +974,88 @@ repeat 180 [ go ]
     </enumeratedValueSet>
     <enumeratedValueSet variable="deceleration">
       <value value="0.05"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="complex 2" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="2000"/>
+    <exitCondition>disposed_cars = 200</exitCondition>
+    <metric>mean_speed_complex</metric>
+    <enumeratedValueSet variable="lane-delay">
+      <value value="0.2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="spawn_period">
+      <value value="10"/>
+      <value value="20"/>
+      <value value="30"/>
+      <value value="40"/>
+      <value value="50"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="barriers">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="acceleration">
+      <value value="0.075"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="barrier-top">
+      <value value="-1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="speed-limit">
+      <value value="0.1"/>
+      <value value="0.2"/>
+      <value value="0.3"/>
+      <value value="0.4"/>
+      <value value="0.5"/>
+      <value value="0.6"/>
+      <value value="0.7"/>
+      <value value="0.8"/>
+      <value value="0.9"/>
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="deceleration">
+      <value value="0.045"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="complex 2 precise" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="2000"/>
+    <exitCondition>disposed_cars = 200</exitCondition>
+    <metric>mean_speed_complex</metric>
+    <enumeratedValueSet variable="lane-delay">
+      <value value="0.2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="spawn_period">
+      <value value="5"/>
+      <value value="10"/>
+      <value value="15"/>
+      <value value="20"/>
+      <value value="25"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="barriers">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="acceleration">
+      <value value="0.075"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="barrier-top">
+      <value value="-1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="speed-limit">
+      <value value="0.05"/>
+      <value value="0.1"/>
+      <value value="0.15"/>
+      <value value="0.2"/>
+      <value value="0.25"/>
+      <value value="0.3"/>
+      <value value="0.35"/>
+      <value value="0.4"/>
+      <value value="0.45"/>
+      <value value="0.5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="deceleration">
+      <value value="0.045"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
