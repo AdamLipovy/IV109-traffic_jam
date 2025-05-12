@@ -413,7 +413,7 @@ speed-limit
 speed-limit
 0.1
 1
-1.0
+0.95
 0.05
 1
 NIL
@@ -469,7 +469,7 @@ barrier-bottom
 barrier-bottom
 -1
 50
-21.0
+-1.0
 1
 1
 NIL
@@ -484,7 +484,7 @@ spawn_period
 spawn_period
 1
 50
-14.0
+41.0
 1
 1
 NIL
@@ -1036,6 +1036,62 @@ repeat 180 [ go ]
     </enumeratedValueSet>
     <enumeratedValueSet variable="deceleration">
       <value value="0.045"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="experiment_1205" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="2000"/>
+    <exitCondition>disposed_cars &gt; 150</exitCondition>
+    <metric>mean_speed_complex</metric>
+    <enumeratedValueSet variable="lane-delay">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="spawn_period">
+      <value value="7"/>
+      <value value="14"/>
+      <value value="21"/>
+      <value value="28"/>
+      <value value="35"/>
+      <value value="42"/>
+      <value value="49"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="barriers">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="barrier-bottom">
+      <value value="-1"/>
+      <value value="20"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="barrier-top">
+      <value value="50"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="acceleration">
+      <value value="0.075"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="deceleration">
+      <value value="0.045"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="speed-limit">
+      <value value="0.1"/>
+      <value value="0.15"/>
+      <value value="0.2"/>
+      <value value="0.25"/>
+      <value value="0.3"/>
+      <value value="0.35"/>
+      <value value="0.4"/>
+      <value value="0.45"/>
+      <value value="0.5"/>
+      <value value="0.55"/>
+      <value value="0.6"/>
+      <value value="0.65"/>
+      <value value="0.7"/>
+      <value value="0.75"/>
+      <value value="0.8"/>
+      <value value="0.85"/>
+      <value value="0.9"/>
+      <value value="0.95"/>
+      <value value="1"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
