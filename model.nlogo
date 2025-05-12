@@ -52,7 +52,16 @@ to setup_one_car
     set ycor future_ycor
     set heading 90
     ;; set initial speed between 0.1 and speed limit
-    set own-max-speed (random-float 0.2) + speed-limit - 0.1
+    ;;set own-max-speed (random-float 0.2) + speed-limit - 0.1
+    ;;set own-max-speed (speed-limit * 0.6 + (random-float speed-limit * 0.4))
+    ;;let wanted_speed 0.1 + random-float 1
+
+    let car-type random 3
+    let wanted-speed (ifelse-value car-type = 2 [0.3][ifelse-value car-type = 1 [0.6][1]])
+
+    set own-max-speed (ifelse-value (wanted-speed > speed-limit) [speed-limit] [wanted-speed])
+
+
     set speed speed-limit ;;;0.1 + random-float (speed-limit - speed)
     set own-line-delay 0
     set is-car true
@@ -270,7 +279,7 @@ end
 GRAPHICS-WINDOW
 10
 410
-987
+1177
 590
 -1
 -1
@@ -284,8 +293,8 @@ GRAPHICS-WINDOW
 0
 0
 1
--25
-25
+-30
+30
 -4
 4
 1
@@ -404,7 +413,7 @@ speed-limit
 speed-limit
 0.1
 1
-0.5
+1.0
 0.05
 1
 NIL
@@ -445,7 +454,7 @@ barrier-top
 barrier-top
 -1
 50
-36.0
+50.0
 1
 1
 NIL
@@ -460,7 +469,7 @@ barrier-bottom
 barrier-bottom
 -1
 50
-24.0
+21.0
 1
 1
 NIL
@@ -475,7 +484,7 @@ spawn_period
 spawn_period
 1
 50
-7.0
+14.0
 1
 1
 NIL
@@ -500,10 +509,10 @@ PENS
 "percent speed limit" 1.0 0 -16777216 true "" "plot mean_speed / speed-limit"
 
 MONITOR
-1130
-240
-1237
-285
+1215
+225
+1322
+270
 NIL
 disposed_cars
 17
@@ -511,11 +520,11 @@ disposed_cars
 11
 
 PLOT
-1125
-310
-1635
-460
-Car speed relative to speed limit inlcuding disposed cars
+1210
+295
+1720
+445
+Mean car speed inlcuding disposed cars
 NIL
 NIL
 0.0
@@ -529,10 +538,10 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot mean_speed_complex"
 
 MONITOR
-1290
-240
-1442
-285
+1375
+225
+1527
+270
 NIL
 tick_of_first_disposed
 17
@@ -554,8 +563,6 @@ Click on GO to start the cars moving.  Note that they wrap around the world as t
 The ACCELERATION slider controls the rate at which cars accelerate (speed up) when there are no cars ahead.
 
 When a car sees another car right in front, it matches that car's speed and then slows down a bit more.  How much slower it goes than the car in front of it is controlled by the DECELERATION slider.
-
-
 @#$#@#$#@
 default
 true

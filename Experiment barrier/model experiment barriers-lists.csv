@@ -1,7 +1,0 @@
-"BehaviorSpace results (NetLogo 6.4.0)","Lists version 2.0"
-"model.nlogo"
-"experiment barriers"
-"05/04/2025 15:02:53:407 +0200"
-"min-pxcor","max-pxcor","min-pycor","max-pycor"
-"-25","25","-4","4"
-"[reporter]","[run number]","number-of-cars","speed-limit","barrier-top","barrier-bottom","[step]"
