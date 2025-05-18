@@ -551,18 +551,22 @@ tick_of_first_disposed
 @#$#@#$#@
 ## WHAT IS IT?
 
+This is a simple model, rendering situation on a road when one or two barriers are in place.
+It shows how average speed can be affected by barrier and flow of cars around.
+
+Even though model takes elements from real life, it is highly simplified and results can be very different from real experiments.
 
 ## HOW TO USE IT
 
-Click on the SETUP button to set up the cars.
+* Click on the SETUP button to set up the cars.
 
-Set the NUMBER-OF-CARS slider to change the number of cars on the road.
+* Set the NUMBER-OF-CARS slider to change the number of cars on the road.
 
-Click on GO to start the cars moving.  Note that they wrap around the world as they move, so the road is like a continuous loop.
+* Click on GO to start the cars moving.  Note that they wrap around the world as they move, so the road is like a continuous loop.
 
-The ACCELERATION slider controls the rate at which cars accelerate (speed up) when there are no cars ahead.
+* The ACCELERATION slider controls the rate at which cars accelerate (speed up) when there are no cars ahead.
 
-When a car sees another car right in front, it matches that car's speed and then slows down a bit more.  How much slower it goes than the car in front of it is controlled by the DECELERATION slider.
+* When a car sees another car right in front, it matches that car's speed and then slows down a bit more.  How much slower it goes than the car in front of it is controlled by the DECELERATION slider.
 @#$#@#$#@
 default
 true
@@ -1038,11 +1042,10 @@ repeat 180 [ go ]
       <value value="0.045"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="experiment_1205" repetitions="1" runMetricsEveryStep="true">
+  <experiment name="experiment_1205" repetitions="4" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <timeLimit steps="2000"/>
-    <exitCondition>disposed_cars &gt; 150</exitCondition>
     <metric>mean_speed_complex</metric>
     <enumeratedValueSet variable="lane-delay">
       <value value="0.1"/>
