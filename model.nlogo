@@ -47,7 +47,7 @@ to setup_one_car
   ]
 
    create-turtles 1 [
-    set color blue
+    ;set color blue
     set xcor (min-pxcor + 3) ;;;nejde se dívat na místa "mimo", a my se u změny směru díváme o dvě dozadu a o jedno dopředu, proto to musí být odsazené
     set ycor future_ycor
     set heading 90
@@ -57,6 +57,8 @@ to setup_one_car
     ;;let wanted_speed 0.1 + random-float 1
 
     let car-type random 3
+    ifelse car-type = 1 [ set color blue ][ ifelse car-type = 2 [set color red][set color green]]
+
     let wanted-speed (ifelse-value car-type = 2 [0.3][ifelse-value car-type = 1 [0.6][1]])
 
     set own-max-speed (ifelse-value (wanted-speed > speed-limit) [speed-limit] [wanted-speed])
@@ -484,7 +486,7 @@ spawn_period
 spawn_period
 1
 50
-41.0
+29.0
 1
 1
 NIL
